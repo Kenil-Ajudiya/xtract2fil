@@ -250,7 +250,7 @@ def xtract2fil(
                     array = array.reshape((-1, int(array.shape[1] // fbin), fbin)).mean(2)
                     array = array.reshape((-1, tbin, array.shape[1])).mean(1)
                     array = array.astype(np.uint8)
-                    array.tofile(filfile_dwnsmp)
+                    array.tofile(filfile)
                 else: # Write the full resolution data only.
                     array.tofile(filfile)
 
@@ -263,7 +263,7 @@ def main(
     tbin: int = 1,
     njobs: int = -1,
     nbeams: int = 10,
-    offset: int = 64,
+    offset: int = 0,
     dual: bool = True,
     output: str | Path = Path.cwd(),
     scan: str = "",
