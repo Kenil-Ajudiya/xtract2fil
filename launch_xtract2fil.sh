@@ -224,6 +224,7 @@ main(){
     source "/lustre_archive/apps/tdsoft/env.sh"
 
     if [[ $MODE == 'dirs' ]]; then
+        FAILURE_COUNT=0
         for DIR in "${DIR_LIST[@]}"; do
             OBS_NAME=$(basename $(dirname "${DIR}"))
 
@@ -259,6 +260,7 @@ main(){
                 if [[ $? -ne 0 ]]; then
                     echo "Skipping scan $scan due to AHDR file error(s)."
                     echo "-------------------------------- Invalid data for scan $scan --------------------------------"
+                    FAILURE_COUNT=$((FAILURE_COUNT + 1))
                     continue
                 fi
 
@@ -266,12 +268,16 @@ main(){
                 echo "-------------------------------- xtract2fil for scan $scan done --------------------------------"
             done
         done
+        if (( FAILURE_COUNT > 0 )); then
+            echo "Completed with $FAILURE_COUNT scan(s) skipped due to errors."
+            return 1
+        fi
     else
         AHDR_FILE="${file_list[0]}.ahdr"
         read_ahdr_file
         if [[ $? -ne 0 ]]; then
             echo "Cannot process $scan due to AHDR file error(s)."
-            continue
+            return 1
         fi
 
         xtract_N_chk
